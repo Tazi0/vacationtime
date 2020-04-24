@@ -1,3 +1,4 @@
+// Made by Tazio
 var obj = {
     "en-US" : {
         "country": "United States",
@@ -6,7 +7,8 @@ var obj = {
         ],
         "yes": "Yes",
         "no": "No",
-        "remaining": "But in $ ",
+        "countdown": "But in $ #",
+        "remaining": "$ # remaining",
         "days": ['day', 'days']
     },
     "nl-NL": {
@@ -24,7 +26,8 @@ var obj = {
         ],
         "yes": "Ja",
         "no": "Nee",
-        "remaining": "Maar wel in $ ",
+        "countdown": "Maar wel in $ #",
+        "remaining": "Nog $ # over",
         "days": ['dag', 'dagen']
     }
 }
@@ -65,6 +68,7 @@ function main() {
                     vacation = true
                     var away = Math.ceil((till.getTime() - date.getTime()) / (oneDay))
                     breakType = e[2]
+                    daysTill = away
                     break;
                 } else {
                     var away = Math.ceil((begin.getTime() - date.getTime()) / (oneDay))
@@ -76,21 +80,25 @@ function main() {
         }
 
         // Debugging
-        console.log(vacation);
-        console.log(daysTill);
-        console.log(breakType);
+        // console.log(vacation);
+        // console.log(daysTill);
+        // console.log(breakType);
 
         // insert["lang"].innerText = data["country"]
         if (vacation) {
             // Yes vacation :)
             insert['answer'].innerText = data["yes"]
-            insert['detail'].innerText = breakType
+            insert['detail'].innerHTML = breakType + `<br>${data['remaining'].replace("$", daysTill).replace("#", (data['days'][daysTill-1] ?? data['days'][1]))}`
 
             document.body.style.backgroundColor = "green";
         } else {
             // Not vacation
             insert['answer'].innerText = data["no"]
-            insert['detail'].innerText = data['remaining'].replace("$", daysTill) + (data['days'][daysTill - 1] ?? data['days'][1]) + " 🙂"
+            if(daysTill != 10000) {
+                insert['detail'].innerText = data['countdown'].replace("$", daysTill).replace("#", (data['days'][daysTill-1] ?? data['days'][1])) + " 🙂"
+            } else {
+                insert['detail'].innerText = "Your country is not in my databank 🙃"
+            }
 
             if (daysTill < 5) {
                 document.body.style.backgroundColor = "orange";
