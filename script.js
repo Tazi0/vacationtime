@@ -14,8 +14,8 @@ var obj = {
     "nl-NL": {
         "country": "Nederland",
         "vacation": [
-            ["15-2", "1-3", "voorjaarsvakantie"], 
-            ["25-4", "3-5", "meivakantie"], 
+            ["15-2", "1-3", "voorjaarsvakantie"],
+            ["25-4", "3-5", "meivakantie"],
             ["4-6", "23-7", "zomervakantie"],
             ["10-10", "25-10", "herfstvakantie"],
             ["19-12", "3-1", "kerstvakantie"],
@@ -26,7 +26,7 @@ var obj = {
         ],
         "yes": "Ja",
         "no": "Nee",
-        "countdown": "Maar wel in $ #",
+        "countdown": "Maar in $ # is het &",
         "remaining": "Nog $ # over",
         "days": ['dag', 'dagen']
     }
@@ -53,14 +53,16 @@ function main() {
         var vacation = false
         var breakType = ""
 
+        // loop
         for (let i = 0; i < data["vacation"].length; i++) {
             const e = data["vacation"][i]
 
+            // Split the dates with -
             var begin = e[0].split("-")
             var till = e[1].split("-")
             var oneDay = 24 * 60 * 60 * 1000
 
-            if (e.length == 3) {
+            if (e.length == 3 && (typeof begin == "object" && typeof till == "object")) {
                 begin = new Date(date.getFullYear(), parseInt(begin[1]) - 1, begin[0])
                 till = new Date(date.getFullYear(), parseInt(till[1]) - 1, till[0])
 
@@ -74,6 +76,7 @@ function main() {
                     var away = Math.ceil((begin.getTime() - date.getTime()) / (oneDay))
                     if (away > 0 && away < daysTill) {
                         daysTill = away
+                        breakType = e[2]
                     }
                 }
             }
@@ -95,7 +98,7 @@ function main() {
             // Not vacation
             insert['answer'].innerText = data["no"]
             if(daysTill != 10000) {
-                insert['detail'].innerText = data['countdown'].replace("$", daysTill).replace("#", (data['days'][daysTill-1] ?? data['days'][1])) + " 🙂"
+                insert['detail'].innerText = data['countdown'].replace("$", daysTill).replace("#", (data['days'][daysTill-1] ?? data['days'][1])).replace("&", breakType) + " 🙂"
             } else {
                 insert['detail'].innerText = "Your country is not in my databank 🙃"
             }
